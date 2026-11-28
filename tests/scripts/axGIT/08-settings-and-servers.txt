@@ -146,8 +146,23 @@ keys enter
 expect state "notice":null
 close
 
-# Check: An everyday repository opens without the notice
-# AG-1.6c: what git clone wrote (the remote, the branch it follows) is known to be harmless.
+# Check: An everyday repository is asked about once with nothing of concern found
+# AG-1.6c: what git clone wrote (the remote, the branch it follows) is known to be harmless, so the notice names no
+# setting; G1 (the review's sixth pass): it is asked about all the same, once, and says what trust means.
+start git {temp}\clone
+expect state "notice":"This repository is not trusted yet"
+expect state axGIT found nothing of concern in it.
+expect state files itself and cannot promise that it found everything.
+expect state Until you trust a repository, axGIT runs no git in it and reaches nothing.
+refuse said This repository has settings axGIT does not know
+refuse said This repository runs programs of its own
+wait 1200
+keys alt+t
+expect said ! Trusted
+expect focus Changes, no changes
+close
+
+# Check: A repository trusted once opens without the notice
 start git {temp}\clone
 expect focus Changes, no changes
 expect state "notice":null

@@ -119,16 +119,19 @@ terms, and axKit neither sees nor changes that traffic: it reads what the progra
   a report or the diagnostics. Before Claude Code is started this way in a folder, axClaude asks whether you trust
   the folder, since Claude Code itself does not ask then.
 - **axGIT, access layer for Git** runs git, your own installed program, one process per command, with its prompts
-  turned off (`GIT_TERMINAL_PROMPT=0`). Before you trust a repository that names a program, a setting axGIT does not
-  know or a place on another computer, axGIT runs no git command in it: it reads the repository's files itself,
-  never one on another computer than the repository's own or through a link, and runs git only as the parser of
-  one settings file, with no repository, which reads that file and reaches nothing.
+  turned off (`GIT_TERMINAL_PROMPT=0`). Every repository is asked about once. Until you trust a repository, axGIT
+  runs no git in it and reaches nothing: it reads the repository's files itself, never one on another computer
+  than the repository's own or through a link, and runs git only as the parser of one settings file, with no
+  repository, which reads that file and reaches nothing. Once you trust it, git works in it as git does: it runs the
+  programs and hooks the repository's settings name, whatever they run in turn (axGIT sets aside only those whose
+  path is in the work tree, on the commands that change the repository), and it reads the files and places those
+  settings and the repository's index name, which can be on another computer, a share among them.
   Three commands reach a remote (GitHub, or wherever your repository's remotes point, a computer that holds a share
-  among them): fetch, pull and push, each only when you choose it, only in a repository you trust or that names
-  nothing of the kind, and, the first time axKit reaches that server, after your consent; a push goes only to a
-  server, never into a folder or a share, and none follows a redirect to another server. git's credential helper may
-  then ask you to sign in, in its own window, and that account is between you and the server. Every other command
-  reads or changes the repository on disk: git is run so that it fetches no missing object of a partial clone by
+  among them): fetch, pull and push, each only when you choose it, only in a repository you trust, and, the first
+  time axKit reaches that server, after your consent; a push goes only to a server, never into a folder or a share,
+  and none follows a redirect to another server. git's credential helper may then ask you to sign in, in its own
+  window, and that account is between you and the server. Every other command reaches no remote and reads or
+  changes the repository's files where they lie; git is run so that it fetches no missing object of a partial clone by
   itself (`GIT_NO_LAZY_FETCH`), and Git LFS neither fetches nor sends a file through axGIT (`GIT_LFS_SKIP_SMUDGE`,
   `GIT_LFS_SKIP_PUSH`; its files stay pointer files, and `git lfs pull` and a push in a terminal fetch and send them).
 - **axTerminal, access layer for your shell** runs your own shell (PowerShell, Command Prompt, Git Bash or PowerShell 7)

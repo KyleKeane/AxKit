@@ -10,6 +10,11 @@ run git -C repo add .
 run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 file repo\a.txt start\n\nfirst paragraph marker\n\nsecond paragraph marker\n\nthird paragraph
 start git {temp}\repo
+# AG-1.6 (G1, the review's sixth pass): every repository is asked about once before git runs in it; Alt+T trusts it.
+expect state "notice":"This repository is not trusted yet"
+wait 1200
+keys alt+t
+expect said ! Trusted
 expect focus Modified a.txt, unstaged
 
 # Goal: Find a word in a diff

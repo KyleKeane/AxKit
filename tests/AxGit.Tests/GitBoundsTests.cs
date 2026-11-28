@@ -157,6 +157,97 @@ public sealed class GitBoundsTests : IDisposable
         Assert.Contains("a.txt", Git(root, "diff", "--cached", "--name-only"));
     }
 
+    /// <summary>The environment of a test's runs with one variable more.</summary>
+    private Dictionary<string, string> With(string name, string value) => new(_env) { [name] = value };
+
+    /// <summary>
+    /// L3 (the review's sixth pass): GIT_COMMON_DIR, on its own. Naming another repository's folder, it is where git
+    /// takes the hooks from: Stage all ran that repository's hook. Not passed on to axGIT's runs.
+    /// </summary>
+    [GitFact]
+    public async Task The_common_folder_of_the_environment_is_not_passed_on()
+    {
+        var other = Repository("common-other");
+        MarkerFile(Path.Combine(other, ".git", "hooks", "post-index-change"), "common-hook");
+        var root = Repository("common-mine");
+        var elsewhere = With("GIT_COMMON_DIR", Path.Combine(other, ".git"));
+        File.AppendAllText(Path.Combine(root, "a.txt"), "more\n");
+        Ran();
+        Assert.True((await GitRunner.RunAsync(root, GitTexts.StageAllArguments, GitRunner.Short, environment: elsewhere)).Ok);
+        Assert.Empty(Ran());
+
+        // The way it ran: git with the variable, as a console started with it runs.
+        File.AppendAllText(Path.Combine(root, "a.txt"), "again\n");
+        var start = new ProcessStartInfo(GitRunner.Program) { WorkingDirectory = root };
+        start.ArgumentList.Add("add");
+        start.ArgumentList.Add("-A");
+        GitTests.Put(start, elsewhere);
+        ProcessRun.Run(start, [], TimeSpan.FromSeconds(60));
+        Assert.Equal(["common-hook"], Ran());
+    }
+
+    /// <summary>git as a console started with <paramref name="environment"/> runs it, in <paramref name="folder"/>.</summary>
+    private ProcessResult GitWith(string folder, IReadOnlyDictionary<string, string> environment, params string[] arguments)
+    {
+        var start = new ProcessStartInfo(GitRunner.Program) { WorkingDirectory = folder };
+        foreach (var argument in arguments)
+        {
+            start.ArgumentList.Add(argument);
+        }
+
+        GitTests.Put(start, environment);
+        return ProcessRun.Run(start, [], TimeSpan.FromSeconds(60));
+    }
+
+    /// <summary>L3: GIT_OBJECT_DIRECTORY, on its own. Naming another repository's object store, it is where Stage all writes the file's content. Not passed on.</summary>
+    [GitFact]
+    public async Task The_object_store_of_the_environment_is_not_passed_on()
+    {
+        var other = Repository("objects-other");
+        var root = Repository("objects-mine");
+        var elsewhere = With("GIT_OBJECT_DIRECTORY", Path.Combine(other, ".git", "objects"));
+        File.WriteAllText(Path.Combine(root, "c.txt"), "content of mine alone\n");
+        var hash = Git(root, "hash-object", "c.txt").Trim();
+        Assert.True((await GitRunner.RunAsync(root, GitTexts.StageAllArguments, GitRunner.Short, environment: elsewhere)).Ok);
+        Assert.NotEqual(0, Plain(other, "cat-file", "-e", hash).ExitCode);
+        Assert.Equal(0, Plain(root, "cat-file", "-e", hash).ExitCode);
+
+        // The way it ran: with the variable, the content goes into the other store.
+        Git(root, "reset", "-q");
+        GitWith(root, elsewhere, "add", "-A");
+        Assert.Equal(0, Plain(other, "cat-file", "-e", hash).ExitCode);
+    }
+
+    /// <summary>L3: GIT_ALTERNATE_OBJECT_DIRECTORIES, on its own. Naming another repository's object store, git reads objects from it. Not passed on.</summary>
+    [GitFact]
+    public async Task The_alternate_object_stores_of_the_environment_are_not_passed_on()
+    {
+        var other = Repository("alternates-other");
+        File.WriteAllText(Path.Combine(other, "c.txt"), "content of the other alone\n");
+        var hash = Git(other, "hash-object", "-w", "c.txt").Trim();
+        var root = Repository("alternates-mine");
+        var elsewhere = With("GIT_ALTERNATE_OBJECT_DIRECTORIES", Path.Combine(other, ".git", "objects"));
+        Assert.False((await GitRunner.RunAsync(root, ["cat-file", "-e", hash], GitRunner.Short, environment: elsewhere)).Ok);
+
+        // The way it ran: with the variable, git finds the other's object.
+        Assert.Equal(0, GitWith(root, elsewhere, "cat-file", "-e", hash).ExitCode);
+    }
+
+    /// <summary>L3: GIT_NAMESPACE, on its own. It makes git's transport see only the branches of one namespace of a repository: a read of a folder's branches shows none. Not passed on.</summary>
+    [GitFact]
+    public async Task The_namespace_of_the_environment_is_not_passed_on()
+    {
+        var other = Repository("namespace-other");
+        var root = Repository("namespace-mine");
+        var elsewhere = With("GIT_NAMESPACE", "elsewhere");
+        var listed = await GitRunner.RunAsync(root, ["ls-remote", "--", other], GitRunner.Short, environment: elsewhere);
+        Assert.True(listed.Ok, listed.AllText);
+        Assert.Contains("refs/heads/", listed.Output);
+
+        // The way it ran: with the variable, the other repository's branches are not seen.
+        Assert.DoesNotContain("refs/heads/", GitWith(root, elsewhere, "ls-remote", "--", other).Output);
+    }
+
     /// <summary>
     /// P1's own cost, kept: a named git folder passes over git's check of who owns a repository (safe.directory;
     /// tried with git 2.53, git's own switch GIT_TEST_ASSUME_DIFFERENT_OWNER standing for a repository another account
@@ -317,7 +408,7 @@ public sealed class GitBoundsTests : IDisposable
         File.WriteAllText(Path.Combine(root, ".gitattributes"), "*.txt filter=x\n");
         var session = new GitSession(root, _ => false, _env);
         await session.CheckAsync();
-        Assert.True(session.Trusted);
+        Assert.True(await session.TrustAsync(session.Scan.Mark));
 
         Git(root, "config", "filter.x.clean", Marker("between"));
         File.AppendAllText(Path.Combine(root, "a.txt"), "more\n");
@@ -464,7 +555,7 @@ public sealed class GitBoundsTests : IDisposable
         var session = new GitSession(root, _ => false, _env);
         var scan = await session.CheckAsync();
         Assert.Empty(scan.Risks);
-        Assert.True(session.Trusted);
+        Assert.True(await session.TrustAsync(scan.Mark));
 
         Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         Assert.Equal(["submodule vendor: core.sshcommand"], session.Scan.Risks);

@@ -604,6 +604,7 @@ public sealed partial class GitTrustScanTests : IDisposable
         var session = new GitSession(root, _ => false, _env);
         var scan = await session.CheckAsync();
         Assert.Empty(scan.Risks);
+        Assert.True(await session.TrustAsync(scan.Mark));
         Assert.True((await session.ChangeAsync(GitTexts.StageAllArguments, GitRunner.Short)).Ok);
         Assert.Equal(["submodule vendor: hook post-index-change"], session.Scan.Risks);
         Assert.False(session.Trusted);

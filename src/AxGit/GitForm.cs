@@ -359,8 +359,8 @@ public sealed partial class GitForm : ItemForm
         {
             // AX-9.5a: the remembered repositories are looked at only on a drive of this computer; when the last one
             // is on the network that is said, and Open recent repository opens it.
-            target = _settings.RecentRepositories.FirstOrDefault(recent => LocalPaths.AtStart(recent, Directory.Exists, out _) is not null);
-            LocalPaths.AtStart(_settings.RecentRepositories.FirstOrDefault(), Directory.Exists, out var notOpened);
+            target = _settings.RecentRepositories.FirstOrDefault(recent => LocalPaths.AtStart(recent, Directory.Exists, out _) is not null); // Not a path of the repository's: the user's own list of folders, on this computer only (AX-9.5a).
+            LocalPaths.AtStart(_settings.RecentRepositories.FirstOrDefault(), Directory.Exists, out var notOpened); // Not a path of the repository's: the user's own list of folders, on this computer only (AX-9.5a).
             SayAtStart(notOpened);
         }
 
@@ -371,7 +371,7 @@ public sealed partial class GitForm : ItemForm
         }
 
         // A path given (the command line, Open recent repository) is the user's own ask: looked at off the window's thread (R-64).
-        if (!await Task.Run(() => Directory.Exists(target)))
+        if (!await Task.Run(() => Directory.Exists(target))) // Not a path of the repository's: the folder the user chose, before any repository is read.
         {
             // A recent repository on a share that is gone, listed without the check (AX-9.5): said, the open one kept.
             Fail($"{target} no longer exists.");
@@ -405,7 +405,7 @@ public sealed partial class GitForm : ItemForm
     /// AG-1.6 (security audit S-2; the reviews of 2026-11-27 and 2026-11-28): what the repository's own settings,
     /// hooks and files, and those of the repositories inside it, would run is read before the repository becomes the
     /// window's, as one piece of work, so that no command runs in it meanwhile. When that cannot be read the
-    /// repository is not opened. When it holds risks the user has not trusted, the notice comes first, and the
+    /// repository is not opened. When the user has not trusted it (every repository, once, also one where nothing was found: G1 of the review's sixth pass), the notice comes first, and the
     /// repository becomes the window's only when the user trusts it (T1): Keep it off opens nothing, and no git
     /// command has run in it.
     /// </summary>
@@ -597,7 +597,7 @@ public sealed partial class GitForm : ItemForm
     }
 
     /// <summary>
-    /// AG-1.6: the notice for a repository whose last check found risks the user has not trusted (T1): what it
+    /// AG-1.6: the notice for a repository the user has not trusted for what its last check found (T1; G1: also when it found nothing): what it
     /// holds, and the two answers. Nothing runs in it meanwhile. Keep it off, the default, closes it (as it opens,
     /// <paramref name="opening"/>, it is never opened); Trust this repository opens it, or reads its lists again.
     /// <paramref name="failed"/>: a failed command's sentence, said first in it, since a second notice would take
@@ -620,7 +620,10 @@ public sealed partial class GitForm : ItemForm
         // the limit of trust said as it is.
         var values = scan.Programs is not { Count: > 0 } named ? string.Empty
             : $"The programs as its settings write them: {string.Join("; ", named.Select(DisplayText.VisibleCommand))}. ";
-        var limit = programs.Count == 0 ? string.Empty : GitTrust.TrustLimit + " ";
+        // G1 (the review's sixth pass): a repository whose check found nothing is asked about too, in these words.
+        var nothing = risks.Count == 0 ? GitTrust.NothingFound + " " : string.Empty;
+        // G2: what trust means, the one text, every time.
+        var limit = GitTrust.TrustLimit + " ";
         var other = notKnown.Count == 0 ? string.Empty : $"It has settings axGIT does not know to be harmless: {string.Join(", ", notKnown)}. ";
         var elsewhere = places.Count == 0 ? string.Empty : $"Its files lead git to places axGIT does not read: {string.Join(", ", places)}. ";
         // T4: said once, here, since a repository with a program in its work tree is asked about by that setting.
@@ -628,8 +631,9 @@ public sealed partial class GitForm : ItemForm
             : $"Its hooks folder or programs lie in its work tree, where a switch or a pull can change them while git runs ({string.Join(", ", tree)}): even trusted, axGIT stages, commits, switches, fetches, pulls and pushes without them, and you run those that need them in a terminal. ";
         var start = opening ? $"axGIT has run nothing in {root}. " : "axGIT runs nothing more in this repository until you choose. ";
         ShowNotice(new Notice(
-            programs.Count > 0 ? "This repository runs programs of its own" : places.Count > 0 ? "This repository leads git elsewhere" : "This repository has settings axGIT does not know",
-            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{start}{runs}{values}{other}{elsewhere}{inTree}{limit}Trust it only if you know where it comes from: then git runs all of it as it would in a console. Keep it off closes the repository.",
+            programs.Count > 0 ? "This repository runs programs of its own" : places.Count > 0 ? "This repository leads git elsewhere"
+            : notKnown.Count > 0 ? "This repository has settings axGIT does not know" : "This repository is not trusted yet",
+            $"{(failed is null ? string.Empty : failed + "\n\n")}{changed}{start}{nothing}{runs}{values}{other}{elsewhere}{inTree}{limit}Trust it only if you know where it comes from. Keep it off closes the repository.",
         [
             new OverlayChoice("Keep it &off", () => KeepOff(root, session, opening), IsDefault: true, IsCancel: true),
             new OverlayChoice("&Trust this repository", () => TrustRepository(root, session, opening)),

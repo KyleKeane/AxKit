@@ -819,6 +819,20 @@ Still owed:
 3. By the maintainer's hands: Save as in axDown on a file whose code page cannot hold a character, Enter in the Save
    dialog pressed twice: "Save as UTF-8?" holds its second; axFile's Add a program the same with the name field.
 
+## Owed: axGIT asks about every repository once (the review's sixth pass of 2026-11-28)
+
+What a read-only review found in axGIT's trust check of the fifth pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`
+AG-1.6, AG-1.6a): every repository is asked about once before git runs in it, also one where nothing was found,
+whose notice "This repository is not trusted yet" says "axGIT found nothing of concern in it. It reads the
+repository's files itself and cannot promise that it found everything."; every notice says what trust means in one
+text; the scan reads HEAD, commondir, `.git` files, the index and path values strictly. Played on the hidden
+desktop, without NVDA, on 2026-11-28: `tests/scripts/axGIT` 01 to 09. Still owed, `docs/axGIT/nvda-test-plan.md`
+section 1 and section 11, with NVDA listening:
+
+1. The notice of a clean repository at its first opening: its title, the two sentences and what trust means, heard
+   whole, and whether the notice is now too long to hear on every new repository.
+2. Alt+T on that notice after its hold: "Trusted", then the window's title and the Changes list read as before.
+
 ## Owed: axGIT trusts only what was seen, on the repository it read (the review's fifth pass of 2026-11-28)
 
 What a read-only review found in axGIT's trust check of the fourth pass, repaired on 2026-11-28 (`docs/axGIT/SPEC.md`

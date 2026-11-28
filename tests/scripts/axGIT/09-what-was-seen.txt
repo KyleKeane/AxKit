@@ -32,12 +32,13 @@ expect state is not inside a git repository.
 refuse said This repository runs programs of its own
 close
 
-# Check: The notice writes out each program and says the limit of trust
-# P5: the setting with its whole value, and what trust lets run.
+# Check: The notice writes out each program and says what trust means
+# P5: the setting with its whole value; G2 (the review's sixth pass): what trust means, in the one text.
 start git {temp}\repo
 expect state "notice":"This repository runs programs of its own"
 expect state The programs as its settings write them: core.sshcommand: ssh -v -o BatchMode=yes.
-expect state Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a hook or program only where its path is in the work tree.
+expect state Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you trust it, git works in it as git does: it runs the programs and hooks the repository
+expect state on the commands that change the repository; and git reads the files and places those settings and its index name, which can be on another computer.
 wait 1200
 keys enter
 expect said Not opened

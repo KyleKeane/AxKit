@@ -13,8 +13,9 @@ public sealed record FileSetting(string Name, string? Value);
 /// a risk is named and said, what is set aside; the reads of a repository's files, in their order, are
 /// <see cref="GitTrustScan"/>.
 ///
-/// The line since the review's fourth pass (2026-11-28, AG-1.6): before the user trusts a repository that holds a
-/// risk, axGIT runs no git command in it at all. Three rounds had each found a way in which git, run in such a
+/// The line since the review's fourth pass (2026-11-28, AG-1.6): before the user trusts a repository, axGIT runs no
+/// git command in it at all; since the sixth pass (G1) that holds for every repository, also one where nothing was
+/// found, which is asked about once like any other. Three rounds had each found a way in which git, run in such a
 /// repository with its programs set aside by name, still ran one or reached another computer (core.unsetenvvars
 /// cleared every setting given to a submodule's run; a push into a folder ran that other repository's hooks; a
 /// legacy remotes file; an include on a share). What the check needs is read by axKit's own code from the files on
@@ -143,8 +144,17 @@ public static partial class GitTrust
     /// <summary>A repository inside whose settings git's parser could not read: nothing of it is known, so it is named as it is.</summary>
     public const string NotRead = "settings that could not be read";
 
-    /// <summary>An index whose form axGIT does not read (<see cref="GitIndex"/>; the fifth pass, P4): which repositories inside git would enter is not known.</summary>
+    /// <summary>An index whose form axGIT does not read (<see cref="GitIndex"/>; the fifth pass, P4; read strictly since the sixth, G3): which repositories inside git would enter, or which places it looks at, is not known.</summary>
     public const string IndexNotRead = "an index axGIT does not read";
+
+    /// <summary>A repository inside whose .git file is not written as git reads one (the sixth pass, H6, G3): where git would go from it is not known.</summary>
+    public const string GitFileNotRead = "a .git file axGIT does not read";
+
+    /// <summary>
+    /// A repository inside whose core.worktree names another folder than the one of the gitlink it was reached from
+    /// (the sixth pass, H3): git, entering it, works on that folder. Named as git lists the setting.
+    /// </summary>
+    public const string WorkTreeElsewhere = "core.worktree";
 
     /// <summary>A path of the repository's that is not in a positive local form, which is never read (<see cref="RepositoryFiles"/>; the fifth pass, P2): "include.path names a place axGIT does not read".</summary>
     public static string NotReadPlace(string what) => $"{what} names {RepositoryFiles.NotRead}";
@@ -192,7 +202,8 @@ public static partial class GitTrust
     /// turned around: a setting is harmless only when its name is here, each with its reason, and every other name
     /// is a risk (<see cref="SettingRisks"/>). What an everyday repository carries is here, as made by <c>git init</c>,
     /// <c>git clone</c>, <c>git submodule</c>, Git for Windows, GitHub's gh, Visual Studio Code and Git LFS, so that
-    /// an ordinary repository opens without the notice. <c>include.path</c> and <c>includeIf</c> are never here:
+    /// the notice of an ordinary repository says it found nothing of concern (since the sixth pass, G1, every
+    /// repository is asked about once; until then such a one opened without the notice). <c>include.path</c> and <c>includeIf</c> are never here:
     /// what they bring in changes with the branch and with any file they name. A new entry needs a reason that
     /// shows it runs no program, reaches no server and moves no file's place; <c>GitTrustTests</c> holds the form.
     /// A value of a harmless name that names another computer is a risk all the same (<see cref="ValueRisks"/>).
@@ -215,7 +226,7 @@ public static partial class GitTrust
         new("core.preloadindex", "The index compared with the disk on several threads."),
         new("core.sparsecheckout", "Whether only some tracked files are written to the work tree: a list of paths."),
         new("core.sparsecheckoutcone", "The form of that list of paths."),
-        new("core.worktree", "Where a submodule's work tree lies, written by git for each one; git only reads through it, since axGIT writes nothing in a repository inside.", InsideOnly: true),
+        new("core.worktree", "Where a submodule's work tree lies, written by git for each one; harmless only where it names the folder of the gitlink the submodule was reached from, which the scan checks (any other is a risk, the sixth pass, H3).", InsideOnly: true),
         new("remote.*.url", "A remote's address: read through git and named in the reminder before axGIT reaches it (AG-5.4a)."),
         new("remote.*.pushurl", "A remote's address for a push: read through git and named in the reminder (AG-5.4a)."),
         new("remote.*.fetch", "Which branches of the remote a fetch brings, and under which names; axGIT's fetch names its own (AG-5.4)."),
@@ -280,11 +291,18 @@ public static partial class GitTrust
     // ---- What runs a program, and how the notice says the risks ----
 
     /// <summary>
-    /// The limit of trust, said in the notice and in AG-1.6b as it is (the review's fifth pass, P5): a program's
-    /// value is a command line, which may run anything, files of the work tree among them, and no reading of its
-    /// text can tell that it stays outside; axGIT sets a program aside only by where the path it names lies.
+    /// What trust means, said plainly and once, in these words wherever it is said (the review's sixth pass,
+    /// 2026-11-28, G2; the notice says it every time, AG-1.6 and the statements of the bundle's rule 8 in the same
+    /// terms). Before trust axGIT runs no git in the repository and reaches nothing; after it git works there as git
+    /// does: it runs what the repository's settings and hooks name, and it reads the files and places its settings
+    /// and its index name, which may lie on another computer. axGIT's scan reads the repository's files itself and
+    /// names what it finds, and a reading of git's formats in C# is never complete, so the trust is the line, not the
+    /// scan (until the fifth pass a repository with nothing found was trusted without asking).
     /// </summary>
-    public const string TrustLimit = "Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a hook or program only where its path is in the work tree.";
+    public const string TrustLimit = "Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you trust it, git works in it as git does: it runs the programs and hooks the repository's settings name, whatever they run in turn, and axGIT sets aside only those whose path is in the work tree, on the commands that change the repository; and git reads the files and places those settings and its index name, which can be on another computer.";
+
+    /// <summary>What the notice says of a repository whose scan found nothing (G1): asked about all the same.</summary>
+    public const string NothingFound = "axGIT found nothing of concern in it. It reads the repository's files itself and cannot promise that it found everything.";
 
     /// <summary>Whether a configuration name makes git run a program: said so in the notice, and set to nothing by its name where it lies in the work tree (<see cref="Overrides"/>).</summary>
     public static bool RunsAProgram(string name) => ProgramNames.IsMatch(name.Trim());
@@ -458,8 +476,9 @@ public static partial class GitTrust
 
     /// <summary>
     /// The words of a setting's value that may name a file: those with a slash or a backslash in them, the quotes
-    /// taken off (<c>sh "./tools/clean.sh" --x</c> gives <c>./tools/clean.sh</c>). A bare program name is looked
-    /// for by git in the PATH, whose folders are the user's.
+    /// taken off (<c>sh "./tools/clean.sh" --x</c> gives <c>./tools/clean.sh</c>), and since the sixth pass (M1) those
+    /// that start with <c>~</c> or <c>%(</c>, or with a drive and a colon (<c>C:tool</c>), which name a file in a way
+    /// the scan reads only in part. A bare program name is looked for by git in the PATH, whose folders are the user's.
     /// </summary>
     public static IReadOnlyList<string> PathWords(string value)
     {
@@ -468,7 +487,9 @@ public static partial class GitTrust
         char? quote = null;
         void End()
         {
-            if (word.Length > 0 && word.ToString() is var text && (text.Contains('/') || text.Contains('\\')))
+            if (word.Length > 0 && word.ToString() is var text
+                && (text.Contains('/') || text.Contains('\\') || text[0] == '~' || text.StartsWith("%(", StringComparison.Ordinal)
+                    || (text.Length >= 2 && char.IsAsciiLetter(text[0]) && text[1] == ':')))
             {
                 words.Add(text);
             }
@@ -557,6 +578,10 @@ public static partial class GitTrust
                 // L7 (the fifth pass): a hook of the settings (git 2.54 and later) with an empty command is one git
                 // cannot start, and the command stopped; git documents two switches for it instead (2.54.0, 2.56.1):
                 // an empty event empties its list of events, and enabled=false turns it off. Older git knows neither.
+                // The sixth pass (L2) read git-hook's page again (git-scm.com, 2.55.0, unchanged to 2.56.1): it also
+                // documents hook.<event>.enabled=false, "no hooks fire for that event", the broader switch, which turns
+                // off every hook of an event, the repository's own hooks folder's too, and needs each event named;
+                // the two per-hook switches are the plainer ones, and stay. Not runnable on git 2.53, which knows none.
                 if (names.Add(risk))
                 {
                     list.Add(new GitSetting($"hook.{hook.Groups[1].Value}.event", string.Empty));

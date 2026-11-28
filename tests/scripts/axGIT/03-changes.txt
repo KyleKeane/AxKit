@@ -15,6 +15,11 @@ run git -C repo -c user.name=Test -c user.email=none commit -q -m first
 file repo\a.txt hello\nchanged world
 file repo\new.txt one\ntwo\nthree
 start git {temp}\repo
+# AG-1.6 (G1, the review's sixth pass): every repository is asked about once before git runs in it; Alt+T trusts it.
+expect state "notice":"This repository is not trusted yet"
+wait 1200
+keys alt+t
+expect said ! Trusted
 expect focus Changes, 2 files
 expect focus Modified a.txt, unstaged
 

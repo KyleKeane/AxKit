@@ -25,8 +25,16 @@ keys space
 expect said ! not checked
 keys space
 expect said ! checked
-# Enter connects: the repository opens on its Changes list.
+# Enter connects; then the repository is asked about once (AG-1.6, G1 of the review's sixth pass).
 keys enter
+expect state "notice":"This repository is not trusted yet"
+
+# Check: After the reminder the repository is asked about once, and Alt+T opens it
+# The trust of AG-1.6, one key more at a repository's first opening (the goal's count is the maintainer's to take
+# in, docs/axKit/workflow-graph.md WG-3.4): Alt+T trusts it, and it opens on its Changes list.
+wait 1200
+keys alt+t
+expect said ! Trusted
 expect focus Changes, 1 file
 # Goal: Read what was agreed to on this computer
 # About, Licence ends with what was agreed to on this computer (AX-11.8): this one, with the date and the version.

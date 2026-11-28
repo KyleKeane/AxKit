@@ -110,33 +110,60 @@ opens in the editor for its type (AG-1.4, AG-D1).
   2026-11-28, T1). A repository that arrives with its `.git` folder (an archive, a USB stick, a share) can name
   programs git runs: a file monitor (`git status`), diff and filter drivers, hooks (commit, switch), an ssh command
   (fetch, push), a credential helper; and files git reads on another computer. **Before the user trusts a
-  repository that holds a risk, axGIT runs no git command in it at all.** Three rounds of review had each found a
+  repository, axGIT runs no git command in it at all, and every repository is asked about once** (G1 of the
+  review's sixth pass, 2026-11-28). Until then a repository whose check found nothing was trusted without asking,
+  and every High of six rounds had that shape: the scan read the repository by a rule a little different from
+  git's (a split index, version 4's byte prefixes, a submodule's `core.worktree`, a byte order mark before HEAD, an
+  include's leading space, a `.git` file in an untracked folder), found nothing, and git then ran a program or read
+  a share there. A re-reading of git's formats in C# is never complete, so the guarantee no longer depends on it,
+  as an editor's workspace trust does not. Three rounds of review had each found a
   way in which git, run in such a repository with its programs set aside by name, still ran one or reached
   another computer (a repository's own `core.unsetenvvars` cleared every setting axGIT gave a submodule's run, and
   the submodule's file monitor ran at the status of opening, H1; a push into a folder read one repository and
   pushed into another, H2; a legacy remotes file, M1; an include or a value on a share, M2). Setting aside by name
   can never be made complete, so the line is where it can be held: what the check needs is read by axKit's own
   code (AG-1.6a), every setting that is not known to be harmless (AG-1.6c), every hook and every place the scan
-  does not read is a risk (`GitTrust`), and with a risk the notice comes first:
+  does not read is a risk (`GitTrust`), and what the scan finds is what the notice says; the notice comes first,
+  for every repository the user has not trusted for what is there now:
   - its title is **This repository runs programs of its own** (a hook or a program setting among the risks),
-    **This repository leads git elsewhere** (a place), or **This repository has settings axGIT does not know**;
+    **This repository leads git elsewhere** (a place), **This repository has settings axGIT does not know**, or,
+    where the check found nothing, **This repository is not trusted yet**;
   - its text: "axGIT has run nothing in <path>." (on a later check, "axGIT runs nothing more in this repository
-    until you choose."), then "Its settings or hooks name programs git would run: …", "The programs as its
+    until you choose."), then, where nothing was found, "axGIT found nothing of concern in it. It reads the
+    repository's files itself and cannot promise that it found everything." (`GitTrust.NothingFound`), or "Its settings or hooks name programs git would run: …", "The programs as its
     settings write them: core.sshcommand: ssh -v; …" (each setting that names a program with its whole value,
     every hidden character written out as in a command offered to run, P5 of the review's fifth pass), "It has
     settings axGIT does not know to be harmless: …", "Its files lead git to places axGIT does not read: …" where
-    there are any, the sentence of T4 where a program lies in the work tree (AG-1.6b), the limit of trust where a
-    program is named (AG-1.6b, P5), and "Trust it only if you know where it comes from: then git runs all of it as
-    it would in a console. Keep it off closes the repository.";
+    there are any, the sentence of T4 where a program lies in the work tree (AG-1.6b), what trust means, every time
+    (below, G2), and "Trust it only if you know where it comes from. Keep it off closes the repository.";
   - **Keep it off** (Enter, Escape) closes the repository: as it opens, it is never opened ("Not opened"); open,
     it is closed ("Repository closed"): no status, no list, nothing runs;
   - **Trust this repository** checks the repository again ("Working: checking…", P3 of the fifth pass: trusted is
     what was seen) and, when it holds what the notice showed, keeps it in the settings (`trusted`, AG-8.1a), says
-    "Trusted", opens it (or reads its lists again), and git runs all of it as in a console from then on. When it
+    "Trusted", opens it (or reads its lists again), and from then on git works in it as git does (G2). Alt+T
+    answers so from anywhere in the notice, once its keys' hold is over. When it
     changed while the notice was open (a filter added meanwhile), nothing is kept and nothing runs: the notice
     comes again with what it holds now, starting "What axGIT finds in this repository changed while you were asked,
     so it is not trusted; here is what it holds now."
-  A repository that holds no risk opens as before, with no notice. The trust is for what axGIT found when it was
+  A repository whose check found nothing is asked about too, once (G1; until the sixth pass it opened with no
+  notice). A repository axGIT itself made would be trusted at its making; axGIT makes none (it has no init and no
+  clone), so there is no such case. A trust given before the sixth pass stays valid where its mark still matches;
+  a repository that opened without the notice then was never trusted, and is asked about once.
+  - *What trust means* (G2 of the sixth pass; `GitTrust.TrustLimit`, said in the notice every time, and in these
+    terms in the bundle's statements of rule 8, `PRIVACY.md`, `README.md`, `docs/axKit/README.md`, `SECURITY.md`
+    and the Outside call comment of `GitRunner`): "Until you trust a repository, axGIT runs no git in it and
+    reaches nothing. Once you trust it, git works in it as git does: it runs the programs and hooks the
+    repository's settings name, whatever they run in turn, and axGIT sets aside only those whose path is in the
+    work tree, on the commands that change the repository; and git reads the files and places those settings and
+    its index name, which can be on another computer." So after trust a status reads an untracked folder's `.git`
+    file and the place it names (H4, through a share), and every file the settings and the index name, wherever
+    they lie; the scan names what it reads, and a miss of the scan is no longer a door to running before trust.
+  - *The limits that need a program writing at the same moment* (L1 of the sixth pass), said and not closed in
+    code: the check and git's start are two steps, so a file changed between them, or a link put on a path after
+    the check looked at it and before it is opened by its path, is seen at the next check only; and the parse kept
+    for a settings file (AG-1.6b) is found by its content's hash, read before and after git's parse, so content
+    swapped and swapped back between those two reads is not seen.
+  The trust is for what axGIT found when it was
   given (`repairs.md` R-53, and T4 of the fourth pass): it is kept with the mark of the scan (`TrustScan.Mark`,
   `GitTrust.Mark`), the SHA-256 of the risks, the value of every setting that is not harmless, the content of
   every hook, of every file such a setting names (a program, an included settings file) and the listing of each
@@ -155,7 +182,12 @@ opens in the editor for its type (AG-1.4, AG-D1).
     a folder that exists, holds `objects` and `refs`; one that is not ends the look, and the folder is "Not a git
     repository" (P1 of the fifth pass, tried with git 2.53: with a HEAD that was no reference, or a commondir that
     named nothing, axGIT read the inner folder and git, run there, went up to the repository above and ran its
-    hooks on Stage all). A `.git` file or link is the entry, which the read below takes or refuses. A
+    hooks on Stage all). HEAD, `commondir` and a `.git` file are read as bytes by git's rule (G3 of the sixth
+    pass, H6: a HEAD with a byte order mark was read as text, the mark taken off, and git took no such folder for a
+    repository): after `ref:` only git's own whitespace (a space, a tab, a line end) before `refs/`, no byte order
+    mark; a `.git` file starts `gitdir: ` with its one space; a path in a `.git` or `commondir` file is the whole
+    rest less its line ends, and one with whitespace at its start or end, a control character (a second line) or a
+    byte order mark is not read another way: it is not opened, or, inside, "a .git file axGIT does not read". A `.git` file or link is the entry, which the read below takes or refuses. A
     repository's own folder and a bare repository have no work tree and are not opened. Until the fourth pass `git
     rev-parse --show-toplevel` ran there first.
   - *git works on the repository that was read* (P1): every run names the git folder the read found and the root
@@ -166,7 +198,10 @@ opens in the editor for its type (AG-1.4, AG-D1).
     named git folder passes over git's own check of who owns a repository (`safe.directory`), so the first time a
     repository is trusted in a window git is asked once whether it opens it itself, `git rev-parse
     --absolute-git-dir` finding it from the root with nothing above it; when git refuses (a repository another
-    account owns), it is not opened, with git's words.
+    account owns), it is not opened, with git's words, and the folder git prints must be the one the read found,
+    compared as full paths, or it is not opened: "git opens another git folder, <printed>, than the one axGIT read,
+    <read>." (H6 of the sixth pass: git, rejecting a `.git` the scan had read, took the folder above for a bare
+    repository and read its settings).
   - *A path of the repository's is read only in a positive local form* (P2 of the fifth pass; `RepositoryFiles`,
     the one way every read below goes): its full path is a plain path on a drive of this computer (not a network
     drive) with no link on its way from the drive's root, or it lies under the repository's own folder with no link
@@ -194,16 +229,35 @@ opens in the editor for its type (AG-1.4, AG-D1).
     folder) (an include is a risk by its name, what it brings in counts at each command, and every include counts
     whatever its condition); the hooks folders, the default one or the one `core.hooksPath` names, relative to the
     work tree, and each one an included file names (L5: its hooks are risks too, and a push looks for Git LFS's
-    pre-push hook in each); the files the other settings name, for the mark and for T4; and the index.
+    pre-push hook in each); the files the other settings name, for the mark and for T4; and the index. A path in
+    a setting is read as git reads it, untrimmed, or named (M1 of the sixth pass: an include with a leading space
+    named " extra.cfg" for git and "extra.cfg" for the scan): one with whitespace at its start or end, a control
+    character, a drive without a separator (`C:x`, relative to that drive's own current folder), a `~` other than
+    `~/`, git's own `%(prefix)/`, or, where git opens it itself (an include, a hooks folder, a submodule's work
+    tree), a path rooted without a drive (`/x`) is "include.path names a place axGIT does not read", and nothing is
+    read for it. In a repository inside, `core.worktree` is a risk, "submodule libs/zip: core.worktree", unless it
+    names the folder of the gitlink the submodule was reached from (H3 of the sixth pass: git, entering the
+    submodule, worked on the other folder).
   - *The repositories inside are those git enters* (P4 of the fifth pass; tried with git 2.53 on every command
     axGIT has, with a submodule, a repository Stage all added, an untracked repository, one in an ignored folder
     and a gitlink left in HEAD alone): git runs itself inside another repository only where the index holds it as
-    a gitlink (mode 160000), on a status, and obeys that repository's own settings there; an untracked one, and
-    one in an ignored folder, it never entered. So the repositories inside are the gitlinks of the index, read in
+    a gitlink (mode 160000), on a status, and obeys that repository's own settings there; inside an untracked one,
+    and one in an ignored folder, it ran nothing. Its status does read an untracked folder's `.git` file and the
+    place it names, to tell whether the folder holds a repository (H4 of the sixth pass, through a share): the scan
+    does not read untracked folders, and that read is what trust allows (G2). So the repositories inside are the gitlinks of the index, read in
     C# from git's documented format (`GitIndex`: versions 2, 3 and 4, a split index with its shared index; any
-    other form is a risk, "an index axGIT does not read"), and the paths `.gitmodules` names (through the parser),
-    each followed into its own index twelve levels down (`GitTrust.Deep`), and the repositories git keeps under
-    `.git/modules`, with or without a work tree, twelve levels of folders down. Once Stage all has made an
+    other form is a risk, "an index axGIT does not read"), strictly since the sixth pass (G3): an entry with an
+    empty name (a split index writes so an entry that replaces one of its shared index, H1, and which path it is
+    lies in a bitmap not read), a name whose length in the flags differs from where it ends (git takes the
+    flags'), a path that is no UTF-8, and any path git's own check (verify_path with core.protectNTFS) would never
+    have let in, since git looks at every path of the index in the work tree (H5: a path on a share was read by a
+    status): one with a backslash, a colon (a drive, a stream), an empty part (a slash at its start or end, two
+    together), a part ending in a dot or a space (`.` and `..` among them), or a part `.git` or `git~1`; each
+    path of version 4 is put together as bytes and decoded once (H2: the bytes dropped were taken as characters,
+    and a gitlink after a path with a letter outside ASCII was read as another path). The paths `.gitmodules` names (through the parser) are held to the same rule, and one that fails it is named, "submodule.x.path names a place axGIT does not read";
+    each is followed into its own index twelve levels down (`GitTrust.Deep`), and then the repositories git keeps under
+    `.git/modules` that no gitlink led to, with or without a work tree, twelve levels of folders down (after the
+    others, so that a submodule is read with the folder it was reached from, H3). Once Stage all has made an
     untracked repository a gitlink, the check after it finds it, and nothing more runs until it is trusted. Until
     the fifth pass the whole work tree was walked for `.git` entries, ignored folders too; the folders of the work
     tree are no longer walked. The `.git` folder is still walked for links, 64 levels down
@@ -248,9 +302,8 @@ opens in the editor for its type (AG-1.4, AG-D1).
   submodule's settings are parsed). So a changing command takes two checks more than it would alone.
   - *The limit of trust* (P5 of the fifth pass): a program a setting names is a command line, which may run
     anything, files of the work tree among them, and no reading of its text can tell that it stays outside. axGIT
-    does not guess: the notice names every such setting with its whole value and says, "Trust lets the programs
-    these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a
-    hook or program only where its path is in the work tree."
+    does not guess: the notice names every such setting with its whole value and says what trust means (AG-1.6,
+    G2 of the sixth pass, which took the place of P5's sentence).
   - *A program in the work tree* (T4; M3, tried with git 2.53: a switch brought a post-checkout hook into a hooks
     folder of the work tree and ran it, before any check could see it). Where the hooks folder, or the file of a
     setting that runs a program, lies in the work tree (`TrustScan.InTree`; not in a `.git` folder, which no
@@ -260,7 +313,10 @@ opens in the editor for its type (AG-1.4, AG-D1).
     it in 2.54.0 and 2.56.1, an empty `hook.<name>.event`, which empties its list of events, and
     `hook.<name>.enabled=false`, since an empty command is one git cannot start and the command stopped (L7 of the
     fifth pass; git 2.53, on the development computer, knows no such hooks, so this was read in git's documentation
-    and is tested on GitHub's build alone). The
+    and is tested on GitHub's build alone). The sixth pass (L2) read git-hook's page again (git-scm.com, 2.55.0,
+    unchanged to 2.56.1): it also documents `hook.<event>.enabled=false`, "no hooks fire for that event", the
+    broader switch, which turns off every hook of an event, the hooks folder's too, and needs each event named; the
+    two per-hook switches are the plainer ones and stay, still not runnable here. The
     notice of AG-1.6 says so once, when the repository is asked about: "Its hooks folder or programs lie in its
     work tree, where a switch or a pull can change them while git runs (…): even trusted, axGIT stages, commits,
     switches, fetches, pulls and pushes without them, and you run those that need them in a terminal." Its reads
@@ -282,10 +338,11 @@ opens in the editor for its type (AG-1.4, AG-D1).
     `pull.rebase`, `pull.ff`, `user.name`, `user.email`, `init.defaultbranch`; a submodule's `url` and `active`;
     `extensions.worktreeconfig`, `objectformat` and `refstorage`; Git LFS's `lfs.repositoryformatversion` and
     `lfs.<address>.access`; and, in a repository inside alone, `core.worktree`, which git writes for every
-    submodule. `include.path` and `includeIf` are never in it. Every other name is a risk, named in the notice
+    submodule, where it names the folder of the gitlink the submodule was reached from (any other is a risk, H3 of
+    the sixth pass, AG-1.6a). `include.path` and `includeIf` are never in it. Every other name is a risk, named in the notice
     as a setting axGIT does not know to be harmless (or as a program, by the names of `GitTrust.ProgramNamesTable`),
-    and part of the mark. An ordinary repository opens without the notice; one with a setting of the user's own
-    that is not in the table is asked about once, and trusted.
+    and part of the mark. An ordinary repository's notice names nothing (since the sixth pass it is asked about
+    once all the same, G1); one with a setting of the user's own that is not in the table names it.
   - *Where the value decides the harm, the value is read* (`GitTrust.ValueRisks`): a value on another computer
     (AG-1.6a), whatever its name; and `remote.<name>.fetch` outside `refs/remotes/`, "remote.origin.fetch writes
     outside refs/remotes" (axGIT's own fetch names its line since the fourth pass, AG-5.4, so such a line no
@@ -322,8 +379,16 @@ opens in the editor for its type (AG-1.4, AG-D1).
     window runs it (L3 of the fifth pass: the reads as they are, the changing commands with what the check found
     in the work tree set aside): no changing command leaves a mark, and every one but a signed commit succeeds, a
     hook of the settings among them (L7, on git 2.54 and later). In `GitBoundsTests`, the fifth pass: P1's climb,
-    P2's forms, P3's race, L1 through `git config --get-urlmatch`, L2 and L5. Each test also runs the script once
-    the way it did run.
+    P2's forms, P3's race, L1 through `git config --get-urlmatch`, L2 and L5, and each of git's variables for other
+    folders on its own (L3 of the sixth pass). In `GitAskedOnceTests`, the sixth pass: a clean repository and each
+    of the review's six (H1 to H6) are not trusted and refuse every command axGIT has until the user's trust, no
+    mark comes, and git's own trace (`GIT_TRACE2_EVENT`) shows no git started but the parser of one settings file
+    with no repository; HEAD, `commondir` and `.git` files in each form; the folder git finds compared at the first
+    trust; the path values of M1. In `GitIndexTests`, indexes written byte by byte for G3's rules. In
+    `RepositoryFilesTests`, every way to the disk (a handle, `RandomAccess`, `Path.Exists` among them) outside
+    `RepositoryFiles` fails, in the scan, the session, the reach, the remote and the window (a line of the window's
+    that touches a path not of the repository's says so at its end). Each test also runs the script once the way it
+    did run.
 
 ### AG-2 The window
 

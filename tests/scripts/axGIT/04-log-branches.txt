@@ -27,6 +27,11 @@ run git -C clone add .
 run git -C clone commit -q -m "from the clone"
 run git -C clone push -q origin main
 start git {temp}\repo
+# AG-1.6 (G1, the review's sixth pass): every repository is asked about once before git runs in it; Alt+T trusts it.
+expect state "notice":"This repository is not trusted yet"
+wait 1200
+keys alt+t
+expect said ! Trusted
 expect focus Changes, no changes
 
 # Goal: Read a commit of the log

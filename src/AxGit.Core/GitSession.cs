@@ -7,7 +7,7 @@ namespace AxGit.Core;
 /// <list type="bullet">
 /// <item>Nothing runs in a repository that is not trusted (T1): every run goes through <see cref="RunAsync"/> or
 /// <see cref="ChangeAsync"/>, which refuse while the last check found risks the user has not trusted, or could not
-/// read the repository's files. A repository that holds no risk is trusted as it is.</item>
+/// read the repository's files. Since the review's sixth pass (G1) no repository is trusted without the user: one whose check found nothing is asked about once too, and a trust is kept with the mark of what was found.</item>
 /// <item>git works on the repository that was read and no other (P1 of the fifth pass): every run names the git
 /// folder the check read (<see cref="TrustScan.GitDir"/>) and the root as the work tree.</item>
 /// <item>Trusted is what was seen (P3): a trust the user gives is checked again (<see cref="TrustAsync"/>) and holds
@@ -48,7 +48,7 @@ public sealed class GitSession
     /// <summary>The last check; a problem in it until the first (<see cref="CheckAsync"/>).</summary>
     public TrustScan Scan { get; private set; } = new([], "not checked yet");
 
-    /// <summary>Whether git may run in the repository: its files could be read, and it holds no risk or the user trusts it for exactly this mark.</summary>
+    /// <summary>Whether git may run in the repository: its files could be read, and the user trusts it for exactly this mark (G1: also when nothing was found).</summary>
     public bool Trusted { get; private set; }
 
     /// <summary>Whether nothing may run any more: the last check could not be made.</summary>
@@ -86,13 +86,21 @@ public sealed class GitSession
             return Scan;
         }
 
-        var trusted = Scan.Known && (Scan.Risks.Count == 0 || Scan.Mark == trusting || Scan.Mark == _trustedMark || _trusts(Scan.Mark));
+        // G1 (the sixth pass): trusted only for a mark the user trusted, also when the scan found nothing.
+        var trusted = Scan.Known && (Scan.Mark == trusting || Scan.Mark == _trustedMark || _trusts(Scan.Mark));
         if (trusted && Scan.GitDir is { } gitDir && !string.Equals(_agreed, gitDir, StringComparison.OrdinalIgnoreCase))
         {
             var asked = await GitRunner.RunAsync(Root, ["rev-parse", "--absolute-git-dir"], GitRunner.Short, cancellation, environment: _environment, findRepository: true);
             if (!asked.Ok)
             {
                 Scan = new TrustScan([], $"git does not open it: {asked.FirstLine}");
+                return Scan;
+            }
+
+            // H6 (the sixth pass): the git folder git finds itself is the one the scan read, or nothing runs.
+            if (OpenedFolder(asked.Output) is not { } opened || !string.Equals(opened, Path.TrimEndingDirectorySeparator(Path.GetFullPath(gitDir)), StringComparison.OrdinalIgnoreCase))
+            {
+                Scan = new TrustScan([], $"git opens another git folder, {asked.Output.Trim()}, than the one axGIT read, {gitDir}.");
                 return Scan;
             }
 
@@ -111,12 +119,31 @@ public sealed class GitSession
     public async Task<bool> TrustAsync(string mark, CancellationToken cancellation = default)
     {
         await CheckAsync(mark, cancellation);
-        if (Trusted && Scan.Risks.Count > 0)
+        if (Trusted)
         {
             _trustedMark = Scan.Mark;
         }
 
         return Trusted;
+    }
+
+    /// <summary>The git folder git printed for <c>rev-parse --absolute-git-dir</c> (one line), as a full path; null for anything else.</summary>
+    private static string? OpenedFolder(string output)
+    {
+        var text = output.TrimEnd('\r', '\n');
+        if (text.Length == 0 || text.Contains('\n'))
+        {
+            return null;
+        }
+
+        try
+        {
+            return Path.TrimEndingDirectorySeparator(Path.GetFullPath(text));
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            return null;
+        }
     }
 
     /// <summary>Why nothing runs now; null when git may run.</summary>

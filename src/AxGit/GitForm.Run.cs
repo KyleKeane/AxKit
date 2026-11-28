@@ -105,7 +105,7 @@ public sealed partial class GitForm
             "axGIT runs the git program, and it is not on this computer: neither on the PATH nor in Program Files. Install it now installs Git for Windows (Windows asks whether the installer may make changes: choose Yes); axGIT then opens the repository. Or install it by hand from git-scm.com.",
         [
             // AG-1.5a: installed, then found the way every git command finds it (GitRunner.Program).
-            new OverlayChoice("&Install Git now", () => InstallProgram(ProgramInstall.Git, () => File.Exists(GitRunner.Program), () =>
+            new OverlayChoice("&Install Git now", () => InstallProgram(ProgramInstall.Git, () => File.Exists(GitRunner.Program), () => // Not a path of the repository's: git's own program, after its install.
             {
                 _gitMissing = false;
                 SetGitItems(true);

@@ -31,8 +31,9 @@ Updated 2026-11-28, early morning.
   one message is in flight at a time, and only a Ctrl or function key opens a notice that answers at once.
   The fifth look at axGIT pinned git to the repository read and reads paths only on this computer; fixed. The
   sixth look at axClaude's message path found a message Claude Code had not taken counted as sent; fixed: a message is in flight until Claude
-  Code has taken it, and nothing sent is lost. axGIT's next batch asks you about every repository once, whatever
-  its scan finds: a reading of git's files can never be complete, so the trust is yours, said plainly.
+  Code has taken it, and nothing sent is lost. axGIT now asks you about every repository once,
+  whatever its scan finds: a reading of git's files can never be complete, so the trust is yours, said plainly. The
+  seventh look at the message path found a taken message given back when Claude Code hides its row; its batch is next.
 - **Fable and Opus**: on 2026-11-28 you said Fable's credits were nearly spent. Every remaining fix batch has
   its written brief with the decisions in it, and the state, the order and the process are in
   `C:\Temp\axkit-tools\HANDOFF.md`, so that Opus can run them; the design work on branches (the graph's
@@ -157,10 +158,29 @@ Each is one line to undo unless it says otherwise.
   address (as `gh pr checkout` of a fork's pull request writes it), with a group of remotes, and for a push
   without a branch, nothing runs and the notice says "Fetch not started" with the reason. Item written for the
   address case.
+- **Every repository is asked about once, whatever the scan finds.** In six rounds the scan missed a form git reads
+  (a split index, a mark before HEAD, a submodule's core.worktree, a .git file in an untracked folder) and each miss
+  let a repository be trusted without asking. A reading of git's formats in C# is never complete, so the guarantee no
+  longer depends on it, as an editor's workspace trust does. A clean repository's notice is titled "This repository
+  is not trusted yet" and says "axGIT found nothing of concern in it. It reads the repository's files itself and
+  cannot promise that it found everything." Alt+T trusts. Repositories that opened silently before were never stored,
+  so each is asked once after the update; trusts you gave stay where their mark matches. axGIT makes no repositories,
+  so none is trusted at its making. To turn back: silent trust for a clean scan, which brings every miss back.
+- **What trust means is one text** (`GitTrust.TrustLimit`), in the notice, the guide, the specification and the
+  privacy and security pages: "Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you
+  trust it, git works in it as git does", running the programs the settings name (those in the work tree set aside
+  on changing commands) and reading the places they and the index name, which can be on another computer.
+- **The scan reads strictly and names what it cannot read**: an index entry git would refuse, a HEAD or .git file
+  not in git's exact form, a path value with blanks at its ends, `C:x` or `~user`, a submodule's core.worktree. A few
+  forms git itself reads are refused (a trailing space in a .git file); a `subst` drive or an 8.3 short name could
+  refuse a repository wrongly. Git 2.54's hooks written as settings are set aside one by one, not with
+  `hook.<event>.enabled=false`, which would also silence the hooks folder.
+- **The trust step in axGIT's scripts 01 and 06 is a "# Check:" section**, not a goal step: goal counts grow only at
+  your word (`tools/graph-check.ps1 -Write`).
 - **Before you trust a repository, axGIT runs no git in it at all, and Keep it off closes it.** Overriding
   settings failed in four rounds in a row (a submodule's own settings cleared every override), so the check reads
-  the files itself, with git only as the parser of one settings file. A repository with nothing of concern opens
-  as before; one with a risk opens only after Trust. There is no read-only look at an untrusted repository: to
+  the files itself, with git only as the parser of one settings file. Since B4f no repository opens without Trust
+  (the entry above). There is no read-only look at an untrusted repository: to
   turn back, a reading mode would need its own review. More repositories now get the notice: a linked worktree,
   a submodule opened by itself, a share in a remote's address.
 - **Your trust covers the files as they are**: each hook's content, each file a setting names, and the program
@@ -223,6 +243,7 @@ Kept in `docs/axKit/nvda-test-record.md` and `docs/axKit/owed.md`; here only wha
 - The kind not-sent (a message given back) has no sound; before, "Claude asked" gave the refused sound.
 - How a held menu confirmation and a held explanation feel, and "Not sent yet" 3 seconds after Enter.
 - Whether the long given-back sentences are heard whole, and "Not sent: Claude is busy".
+- Whether axGIT's trust notice, now heard at every new repository, is too long.
 - (More as the passes run.)
 
 ## What to try first

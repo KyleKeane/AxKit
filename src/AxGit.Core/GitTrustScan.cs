@@ -46,9 +46,16 @@ public sealed record TrustScan(IReadOnlyList<string> Risks, string? Problem, str
 /// The repositories inside are those git enters (P4 of the fifth pass; tried with git 2.53 on every command axGIT
 /// has): the gitlinks of each repository's index and the paths its <c>.gitmodules</c> names, each followed into its
 /// own index, <see cref="GitTrust.Deep"/> levels down; and those git keeps under <c>.git/modules</c>
-/// (<see cref="ModuleFolders"/>). An untracked repository, and one in an ignored folder, git never enters; once
-/// Stage all has made one a gitlink, the check after it finds it. Until the fifth pass the whole work tree was walked
-/// for <c>.git</c> entries.
+/// (<see cref="ModuleFolders"/>), read after the others. An untracked folder the scan does not read: git runs nothing
+/// inside one, but its status reads an untracked folder's <c>.git</c> file and the place it names, to tell whether the
+/// folder holds a repository (the review's sixth pass, H4: a share it named was read), which is what trust allows
+/// (<see cref="GitTrust.TrustLimit"/>); once Stage all has made one a gitlink, the check after it reads it. Until the
+/// fifth pass the whole work tree was walked for <c>.git</c> entries.
+///
+/// Since the sixth pass (G1) what the scan finds is what the notice says, and no longer what decides whether the user
+/// is asked: every repository is asked about once. It reads strictly and fails closed (G3): HEAD, commondir and a
+/// <c>.git</c> file as bytes by git's rule, the index by <see cref="GitIndex"/>'s strict rule, every path in a
+/// setting as git reads it or named; what it cannot read so is a risk named, or the repository is not opened.
 ///
 /// All of it runs off the caller's thread (root CLAUDE.md rule 3), with <see cref="AtOnce"/> repositories inside
 /// read at a time.
@@ -111,11 +118,13 @@ public static class GitTrustScan
     /// Whether git takes <paramref name="folder"/> for a repository (git's own rule, setup.c): its HEAD is a
     /// reference (<c>ref: refs/…</c>) or an object id; its common folder, the one its <c>commondir</c> file names or
     /// itself, holds <c>objects</c> and <c>refs</c>. Every file read through <see cref="RepositoryFiles"/>, from
-    /// <paramref name="root"/>: a commondir that names a place axGIT does not read is no repository here.
+    /// <paramref name="root"/>, as bytes by git's rule (the sixth pass, H6: a HEAD with a byte order mark was read as
+    /// text, the mark taken off, and git took no such folder for a repository): a commondir that names a place
+    /// axGIT does not read, or is not written as git reads it, is no repository here.
     /// </summary>
     public static bool IsGitDirectory(string folder, string root)
     {
-        if (RepositoryFiles.Text(Path.Combine(folder, "HEAD"), root, 256) is not { } head || !IsHead(head.Text))
+        if (RepositoryFiles.Bytes(Path.Combine(folder, "HEAD"), root, SmallFile) is not { } head || !IsHead(head))
         {
             return false;
         }
@@ -134,10 +143,10 @@ public static class GitTrustScan
         return RepositoryFiles.Attributes(Path.Combine(common, "objects"), root) is not null && RepositoryFiles.Attributes(Path.Combine(common, "refs"), root) is not null;
     }
 
-    /// <summary>The folder a commondir file names, as a full path, when it is a folder that exists and may be read; null otherwise.</summary>
+    /// <summary>The folder a commondir file names, as a full path, when it is written as git reads it and is a folder that exists and may be read; null otherwise.</summary>
     private static string? CommonOf(string folder, string root)
     {
-        if (RepositoryFiles.Text(Path.Combine(folder, "commondir"), root) is not { } text || text.Text.Replace("\r", string.Empty, StringComparison.Ordinal).Split('\n')[0].Trim() is not { Length: > 0 } named)
+        if (CommonText(folder, root) is not { } named)
         {
             return null;
         }
@@ -153,16 +162,106 @@ public static class GitTrustScan
         }
     }
 
-    /// <summary>A HEAD git reads as one: "ref:" and a name under refs/, or an object id of 40 or 64 hexadecimal digits.</summary>
-    private static bool IsHead(string text)
+    /// <summary>The path a git folder's commondir file holds, by git's rule (<see cref="PathIn"/>); null when it is not there or not written so.</summary>
+    private static string? CommonText(string folder, string root) =>
+        RepositoryFiles.Bytes(Path.Combine(folder, "commondir"), root, SmallFile) is { } bytes ? PathIn(bytes, 0) : null;
+
+    /// <summary>The largest HEAD or commondir file read; git reads a HEAD's first 255 bytes, and one larger than this is no repository here.</summary>
+    private const long SmallFile = 64 * 1024;
+
+    /// <summary>The largest .git file read: git's own limit, 1 MB.</summary>
+    private const long GitFileLargest = 1024 * 1024;
+
+    /// <summary>
+    /// A HEAD git reads as one (setup.c, validate_headref), from its first 255 bytes: "ref:", any of git's own
+    /// whitespace (a space, a tab, a line end; nothing else, no byte order mark), and a name under refs/; or an object
+    /// id, 40 hexadecimal digits at least (of 40 or 64), whatever follows them.
+    /// </summary>
+    private static bool IsHead(byte[] bytes)
     {
-        if (text.StartsWith("ref:", StringComparison.Ordinal))
+        var head = bytes.AsSpan(0, Math.Min(bytes.Length, 255));
+        if (head.StartsWith("ref:"u8))
         {
-            return text[4..].TrimStart().StartsWith("refs/", StringComparison.Ordinal);
+            var rest = head[4..];
+            while (rest.Length > 0 && rest[0] is (byte)' ' or (byte)'\t' or (byte)'\n' or (byte)'\r')
+            {
+                rest = rest[1..];
+            }
+
+            return rest.StartsWith("refs/"u8);
         }
 
-        // git reads the first 40 or 64 digits and nothing after them.
-        return text.TakeWhile(char.IsAsciiHexDigit).Count() >= 40;
+        var digits = 0;
+        while (digits < head.Length && char.IsAsciiHexDigit((char)head[digits]))
+        {
+            digits++;
+        }
+
+        return digits >= 40;
+    }
+
+    /// <summary>UTF-8 that refuses what is no UTF-8.</summary>
+    private static readonly System.Text.UTF8Encoding Strict = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+
+    /// <summary>
+    /// The path a commondir file, or a .git file after its "gitdir: " (<paramref name="skip"/> bytes), holds as git
+    /// reads it (setup.c): the whole content less the line ends at its end. Null where the scan cannot be sure to read
+    /// the path git reads (the sixth pass, H6, G3): nothing there, no UTF-8, a byte order mark, a control character
+    /// in it (a second line among them), or whitespace at its start or end (a space git keeps, which Windows may
+    /// drop). Such a file is not opened, or named as a risk, never read another way.
+    /// </summary>
+    private static string? PathIn(byte[] bytes, int skip)
+    {
+        var length = bytes.Length;
+        while (length > skip && bytes[length - 1] is (byte)'\n' or (byte)'\r')
+        {
+            length--;
+        }
+
+        if (length <= skip)
+        {
+            return null;
+        }
+
+        string text;
+        try
+        {
+            text = Strict.GetString(bytes, skip, length - skip);
+        }
+        catch (System.Text.DecoderFallbackException)
+        {
+            return null;
+        }
+
+        return text[0] == '﻿' || text.Any(char.IsControl) || char.IsWhiteSpace(text[0]) || char.IsWhiteSpace(text[^1]) ? null : text;
+    }
+
+    /// <summary>
+    /// Whether a path in a setting (an include, a hooks folder, a file a setting names, a submodule's work tree) is
+    /// one the scan reads as git does (the sixth pass, M1); otherwise the place is named, and nothing read. Not so:
+    /// whitespace at its start or end, a control character, a drive without a separator (<c>C:x</c>, relative to that
+    /// drive's own current folder), a <c>~</c> other than <c>~/</c> (another user's folder), git's own
+    /// <c>%(prefix)/</c>; and where git opens the path itself (<paramref name="byGit"/>, not a shell), a path rooted
+    /// without a drive (<c>/x</c>, the current drive's).
+    /// </summary>
+    private static bool Readable(string value, bool byGit)
+    {
+        if (value.Length == 0 || char.IsWhiteSpace(value[0]) || char.IsWhiteSpace(value[^1]) || value.Any(char.IsControl))
+        {
+            return false;
+        }
+
+        if ((value[0] == '~' && !value.StartsWith("~/", StringComparison.Ordinal)) || value.StartsWith("%(", StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        if (value.Length >= 2 && char.IsAsciiLetter(value[0]) && value[1] == ':' && (value.Length == 2 || value[2] is not ('/' or '\\')))
+        {
+            return false;
+        }
+
+        return !byGit || value[0] is not ('/' or '\\') || (value.Length > 1 && value[1] is '/' or '\\');
     }
 
     /// <summary>What one scan keeps while it reads: the repository's root, the computer it lies on, and what was found.</summary>
@@ -271,33 +370,43 @@ public static class GitTrustScan
             return new TrustScan([], reading.Problem);
         }
 
-        // The repositories git keeps under .git/modules, with or without a work tree.
+        // Level by level: each repository inside that a gitlink leads to read, with the work tree it was reached from,
+        // and the gitlinks of its own index followed in their turn.
         var queue = new List<Nested>(inside.Where(one => seen.Add(one.GitDir)));
+        async Task ReadAllAsync()
+        {
+            while (queue.Count > 0)
+            {
+                var next = new List<Nested>();
+                foreach (var some in queue.Chunk(AtOnce))
+                {
+                    var read = await Task.WhenAll(some.Select(one => RepositoryAsync(reading, one)));
+                    next.AddRange(read.SelectMany(one => one.Inside).Where(one => seen.Add(one.GitDir)));
+                }
+
+                queue = next;
+            }
+        }
+
+        await ReadAllAsync();
+
+        // Then the repositories git keeps under .git/modules that no gitlink led to, with or without a work tree: after
+        // the others, so that one a gitlink leads to is read with its work tree (H3: its core.worktree is checked
+        // against the folder it was reached from), also a submodule's own submodule.
         if (common is not null)
         {
             var modules = Path.Combine(common, "modules");
             if (RepositoryFiles.Attributes(modules, root) is { } kind && !kind.HasFlag(FileAttributes.ReparsePoint))
             {
                 var (found, tooDeep) = ModuleFolders(modules, root);
-                queue.AddRange(found.Where(seen.Add).Select(folder => new Nested(Path.GetRelativePath(modules, folder).Replace('\\', '/'), folder, null, 1)));
+                queue = [.. found.Where(seen.Add).Select(folder => new Nested(Path.GetRelativePath(modules, folder).Replace('\\', '/'), folder, null, 1))];
                 foreach (var folder in tooDeep)
                 {
                     reading.Add(Path.GetRelativePath(modules, folder).Replace('\\', '/'), [GitTrust.NotRead]);
                 }
-            }
-        }
 
-        // Level by level: each repository inside read, and the gitlinks of its own index followed in their turn.
-        while (queue.Count > 0)
-        {
-            var next = new List<Nested>();
-            foreach (var some in queue.Chunk(AtOnce))
-            {
-                var read = await Task.WhenAll(some.Select(one => RepositoryAsync(reading, one)));
-                next.AddRange(read.SelectMany(one => one.Inside).Where(one => seen.Add(one.GitDir)));
+                await ReadAllAsync();
             }
-
-            queue = next;
         }
 
         var risks = reading.Risks.Distinct(StringComparer.Ordinal).ToList();
@@ -348,8 +457,9 @@ public static class GitTrustScan
             return Path.GetFullPath(dot);
         }
 
-        // A .git file: the folder it names, worked out from its text alone.
-        if (RepositoryFiles.Text(dot, reading.Root) is not { } read)
+        // A .git file: the folder it names, worked out from its bytes alone, by git's rule (setup.c,
+        // read_gitfile_gently): "gitdir: " with its one space, then the whole rest less its line ends (H6, G3).
+        if (RepositoryFiles.Bytes(dot, reading.Root, GitFileLargest) is not { } read)
         {
             if (top)
             {
@@ -357,18 +467,21 @@ public static class GitTrustScan
             }
             else
             {
-                reading.Add(name, [GitTrust.NotRead]);
+                reading.Add(name, [GitTrust.GitFileNotRead]);
             }
 
             return null;
         }
 
-        var text = read.Text.Split('\n')[0].Trim();
-        if (!text.StartsWith("gitdir:", StringComparison.Ordinal) || text[7..].Trim() is not { Length: > 0 } named)
+        if (!read.AsSpan().StartsWith("gitdir: "u8) || PathIn(read, 8) is not { } named)
         {
             if (top)
             {
-                reading.Problem = "Its .git file names no repository.";
+                reading.Problem = "Its .git file is not written as git reads one, so axGIT does not open it.";
+            }
+            else
+            {
+                reading.Add(name, [GitTrust.GitFileNotRead]);
             }
 
             return null;
@@ -436,8 +549,15 @@ public static class GitTrustScan
 
         // A linked work tree's common folder, named in its commondir file.
         var common = gitDir;
-        if (RepositoryFiles.Text(Path.Combine(gitDir, "commondir"), reading.Root) is { } commonText && commonText.Text.Replace("\r", string.Empty, StringComparison.Ordinal).Split('\n')[0].Trim() is { Length: > 0 } commonPath)
+        if (RepositoryFiles.Attributes(Path.Combine(gitDir, "commondir"), reading.Root) is not null)
         {
+            // Read as git reads it (H6, G3); one written otherwise is not opened.
+            if (CommonText(gitDir, reading.Root) is not { } commonPath)
+            {
+                reading.Add(name, [.. risks, GitTrust.NotReadPlace("its commondir file")]);
+                return Fail("Its commondir file is not written as git reads one, so axGIT does not open it.");
+            }
+
             if (reading.Elsewhere(commonPath) is { } host)
             {
                 reading.Add(name, [.. risks, GitTrust.OnAnotherComputer("its commondir file", host)]);
@@ -504,6 +624,16 @@ public static class GitTrustScan
 
         risks.AddRange(GitTrust.SettingRisks(settings, inside));
         risks.AddRange(GitTrust.ValueRisks(settings, reading.Computer, RepositoryFiles.IsNetworkDrive));
+
+        // H3 (the sixth pass): a repository inside works on the folder its core.worktree names, which git resolves from
+        // its git folder; harmless only where that is the folder of the gitlink it was reached from, as git writes it.
+        if (inside && named.Any(IsWorkTree) && !named.Where(IsWorkTree).All(setting => setting.Value is { } value && workTree is not null
+            && Readable(value, byGit: true) && Resolve(value, gitDir, byGit: true) is { } path
+            && string.Equals(Path.TrimEndingDirectorySeparator(path), Path.TrimEndingDirectorySeparator(Path.GetFullPath(workTree)), StringComparison.OrdinalIgnoreCase)))
+        {
+            risks.Add(GitTrust.WorkTreeElsewhere);
+        }
+
         reading.Add(name, risks);
 
         // For the mark: every setting that is not harmless with its value; for the notice, each program with its value (P5).
@@ -518,9 +648,22 @@ public static class GitTrustScan
 
         // The hooks folders: core.hooksPath where the repository's own files or the files they include set it, git's
         // own otherwise (L5: an include may set it, also one whose condition holds only on some branches).
+        // A hooks folder whose path the scan cannot read as git does (M1) is named, and no folder read in its place.
+        string? HooksFolder(string value)
+        {
+            if (Readable(value, byGit: true))
+            {
+                return Resolve(value, start, byGit: true);
+            }
+
+            reading.Add(name, [GitTrust.NotReadPlace("core.hookspath")]);
+            reading.Line($"hooks {value} not read");
+            return null;
+        }
+
         var ownHooks = settings.LastOrDefault(setting => IsHooksPath(setting) && setting.Value is { Length: > 0 })?.Value;
-        var folders = new List<string?> { ownHooks is null ? Path.Combine(common, "hooks") : Resolve(ownHooks, start) };
-        folders.AddRange(named.Except(settings).Where(setting => IsHooksPath(setting) && setting.Value is { Length: > 0 }).Select(setting => Resolve(setting.Value!, start)));
+        var folders = new List<string?> { ownHooks is null ? Path.Combine(common, "hooks") : HooksFolder(ownHooks) };
+        folders.AddRange(named.Except(settings).Where(setting => IsHooksPath(setting) && setting.Value is { Length: > 0 }).Select(setting => HooksFolder(setting.Value!)));
         var hooksFolders = folders.OfType<string>().Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         foreach (var folder in hooksFolders)
         {
@@ -539,10 +682,26 @@ public static class GitTrustScan
         // The files the other settings name: hashed for the mark, and a program in the work tree noted (T4).
         foreach (var setting in named.Where(setting => !GitTrust.IsInert(setting.Name, inside) && setting.Value is not null))
         {
-            foreach (var word in GitTrust.PathWords(setting.Value!))
+            var words = GitTrust.PathWords(setting.Value!);
+            // M1: a value with whitespace at an end, where a file of git's own may be named whole, is not read as git reads it.
+            if (words.Count > 0 && (char.IsWhiteSpace(setting.Value![0]) || char.IsWhiteSpace(setting.Value[^1])))
             {
-                if (reading.Elsewhere(word) is not null || word.Contains("://", StringComparison.Ordinal) || Resolve(word, start) is not { } path)
+                reading.Add(name, [GitTrust.NotReadPlace(setting.Name)]);
+                reading.Line($"file {setting.Value} not read");
+                continue;
+            }
+
+            foreach (var word in words)
+            {
+                if (reading.Elsewhere(word) is not null || word.Contains("://", StringComparison.Ordinal))
                 {
+                    continue;
+                }
+
+                if (!Readable(word, byGit: false) || Resolve(word, start, byGit: false) is not { } path)
+                {
+                    reading.Add(name, [GitTrust.NotReadPlace(setting.Name)]);
+                    reading.Line($"file {word} not read");
                     continue;
                 }
 
@@ -571,7 +730,7 @@ public static class GitTrustScan
             }
             else
             {
-                var paths = Gitlinks(reading, name, gitDir, settings).Concat(await ModulePathsAsync(reading, workTree)).Distinct(StringComparer.Ordinal);
+                var paths = Gitlinks(reading, name, gitDir, settings).Concat(await ModulePathsAsync(reading, name, workTree)).Distinct(StringComparer.Ordinal);
                 foreach (var path in paths)
                 {
                     var folder = Path.Combine(workTree, path.Replace('/', Path.DirectorySeparatorChar));
@@ -592,6 +751,8 @@ public static class GitTrustScan
     }
 
     private static bool IsHooksPath(FileSetting setting) => setting.Name.Equals("core.hookspath", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsWorkTree(FileSetting setting) => setting.Name.Equals("core.worktree", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>The gitlinks of a repository's index, and of the shared index a split index names; an index axGIT does not read is a risk (P4).</summary>
     private static IReadOnlyList<string> Gitlinks(Reading reading, string name, string gitDir, IReadOnlyList<FileSetting> settings)
@@ -624,8 +785,13 @@ public static class GitTrustScan
         return links;
     }
 
-    /// <summary>The paths a work tree's <c>.gitmodules</c> names (<c>submodule.&lt;name&gt;.path</c>), read through the parser; none when it has none.</summary>
-    private static async Task<IReadOnlyList<string>> ModulePathsAsync(Reading reading, string workTree)
+    /// <summary>
+    /// The paths a work tree's <c>.gitmodules</c> names (<c>submodule.&lt;name&gt;.path</c>), read through the parser,
+    /// as they are; none when it has none. A path git's own check would not let in (<see cref="GitIndex.IsPath"/>:
+    /// whitespace or a slash at its end, a backslash, a colon, a step up) is named as a place not read (G3), never
+    /// read in another form.
+    /// </summary>
+    private static async Task<IReadOnlyList<string>> ModulePathsAsync(Reading reading, string name, string workTree)
     {
         var file = Path.Combine(workTree, ".gitmodules");
         if (RepositoryFiles.Attributes(file, reading.Root) is not { } kind || kind.HasFlag(FileAttributes.Directory) || kind.HasFlag(FileAttributes.ReparsePoint))
@@ -633,8 +799,20 @@ public static class GitTrustScan
             return [];
         }
 
-        var settings = await ParseAsync(reading, file) ?? [];
-        return [.. settings.Where(setting => GitTrust.Shape(setting.Name) == "submodule.*.path" && setting.Value is { Length: > 0 }).Select(setting => setting.Value!.Trim().Replace('\\', '/').Trim('/'))];
+        var paths = new List<string>();
+        foreach (var setting in (await ParseAsync(reading, file) ?? []).Where(setting => GitTrust.Shape(setting.Name) == "submodule.*.path" && setting.Value is { Length: > 0 }))
+        {
+            if (GitIndex.IsPath(setting.Value!) && !char.IsWhiteSpace(setting.Value![0]))
+            {
+                paths.Add(setting.Value!);
+            }
+            else
+            {
+                reading.Add(name, [GitTrust.NotReadPlace(setting.Name)]);
+            }
+        }
+
+        return paths;
     }
 
     /// <summary>
@@ -649,14 +827,15 @@ public static class GitTrustScan
         var more = new List<FileSetting>();
         foreach (var include in settings.Where(setting => setting.Value is { Length: > 0 } && GitTrust.Shape(setting.Name) is "include.path" or "includeif.*.path"))
         {
-            var value = include.Value!.Trim();
-            if (reading.Elsewhere(value) is not null || value.StartsWith("%(", StringComparison.Ordinal) || Resolve(value, folder) is not { } path)
+            // As git reads it, untrimmed (M1): a path the scan cannot read as git does is named, and nothing read for it.
+            var value = include.Value!;
+            if (reading.Elsewhere(value) is not null)
             {
                 reading.Line($"include {value}");
                 continue;
             }
 
-            if (RepositoryFiles.Place(path, reading.Root) is null)
+            if (!Readable(value, byGit: true) || Resolve(value, folder, byGit: true) is not { } path || RepositoryFiles.Place(path, reading.Root) is null)
             {
                 reading.Add(name, [GitTrust.NotReadPlace(include.Name)]);
                 reading.Line($"include {value} not read");
@@ -812,19 +991,25 @@ public static class GitTrustScan
     private static List<string> FileNames(Reading reading, string folder, bool files = true) =>
         [.. RepositoryFiles.Entries(folder, reading.Root).Where(entry => !files || !entry.IsFolder).Select(entry => entry.Name).Order(StringComparer.OrdinalIgnoreCase)];
 
-    /// <summary>A path of a setting as git reads it: <c>~/</c> under the user's folder, a relative one from <paramref name="start"/>; null for one that is no path here. Worked out from the text alone.</summary>
-    private static string? Resolve(string value, string start)
+    /// <summary>
+    /// A path of a setting as git reads it, as it is (the sixth pass, M1: untrimmed; <see cref="Readable"/> says first
+    /// whether it can be): <c>~/</c> under the user's folder, a relative one from <paramref name="start"/>; null for
+    /// one that is no path here. <paramref name="byGit"/>: git opens it itself (an include, a hooks folder, a
+    /// submodule's work tree); otherwise it is a word of a command the shell of Git for Windows runs, where
+    /// <c>/c/work</c> is the drive's form. Worked out from the text alone.
+    /// </summary>
+    private static string? Resolve(string value, string start, bool byGit)
     {
         try
         {
-            var path = value.Trim().Trim('"');
-            if (path.StartsWith("~/", StringComparison.Ordinal) || path.StartsWith(@"~\", StringComparison.Ordinal))
+            var path = value;
+            if (path.StartsWith("~/", StringComparison.Ordinal))
             {
                 path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), path[2..]);
             }
 
-            // Git for Windows' own form of a drive, /c/work.
-            if (path.Length >= 3 && path[0] == '/' && char.IsAsciiLetter(path[1]) && path[2] == '/')
+            // The shell's own form of a drive, /c/work.
+            if (!byGit && path.Length >= 3 && path[0] == '/' && char.IsAsciiLetter(path[1]) && path[2] == '/')
             {
                 path = $"{path[1]}:{path[2..]}";
             }

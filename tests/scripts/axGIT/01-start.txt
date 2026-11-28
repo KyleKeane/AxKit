@@ -18,9 +18,23 @@ file repo\new.txt untracked text
 mkdir plain
 
 # Goal: Open a repository
-# 1.1 The window is named after the repository, the Changes list focused on its first item; nothing announced.
+# 1.1 A repository is asked about once before git runs in it, also one where axGIT finds nothing of concern (AG-1.6,
+# G1 of the review's sixth pass): the notice comes first.
 start git {temp}\repo
-expect state , axGIT, 
+expect state "notice":"This repository is not trusted yet"
+
+# Check: A repository with nothing of concern is asked about once, and the notice says what trust means
+# The notice says so and what trust means; Alt+T trusts it, one key more at a repository's first opening (the goal's
+# count is the maintainer's to take in, docs/axKit/workflow-graph.md WG-3.4). Then the window is named after the
+# repository, the Changes list focused on its first item.
+expect state axGIT found nothing of concern in it.
+expect state files itself and cannot promise that it found everything.
+expect state Until you trust a repository, axGIT runs no git in it and reaches nothing.
+expect state Keep it off closes the repository.
+wait 1200
+keys alt+t
+expect said ! Trusted
+expect state , axGIT,
 expect state \repo","notice"
 expect focus Changes, 2 files
 expect focus Modified a.txt, unstaged
@@ -112,6 +126,12 @@ expect focus Changes, 2 files
 # Goal: Close the window
 # 1.6 Alt+F4 closes the window without a question (the runner's close is Alt+F4's path; that no question came is
 # not checked: the runner has no step that expects a window to be gone).
+close
+
+# Check: A repository trusted once opens without the notice
+start git {temp}\repo
+expect focus Changes, 2 files
+expect state "notice":null
 close
 
 # Check: A folder that is not a repository is said in a notice

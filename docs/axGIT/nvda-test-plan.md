@@ -6,7 +6,7 @@ Run with NVDA before a release, on a repository with a remote (the axKit reposit
 
 ## 1. Start (AG-1, AG-2)
 
-1. Start axGIT on the repository: NVDA reads "<folder name> - axGIT window", then "Changes, 2 files list, Modified <file>, unstaged, 1 of 2" (or similar). Nothing else is spoken.
+1. Start axGIT on the repository for the first time: the notice "This repository is not trusted yet" comes first (every repository is asked about once, AG-1.6, since the review's sixth pass), and NVDA reads its text: "axGIT found nothing of concern in it. It reads the repository's files itself and cannot promise that it found everything.", then what trust means, "Until you trust a repository, axGIT runs no git in it and reaches nothing. …". Alt+T (after the second of the hold): "Trusted"; NVDA reads "<folder name> - axGIT window", then "Changes, 2 files list, Modified <file>, unstaged, 1 of 2" (or similar). Nothing else is spoken. The next start on it shows no notice.
 2. Down Arrow: the next item, nothing else. Tab: "Details, edit, read only", empty. Shift+Tab: the list, the same item as before. F6: the details again; Ctrl+Tab: the list.
 3. NVDA+End: the status bar: "main · no upstream · 2 changed, 0 staged" in a repository without a remote (or the branch's state: "up to date", "2 ahead"), then the path.
 4. Alt+1 while the Changes list shows: "Changes, 2 files". Alt+2: "Log, 200 commits list, <hash> <date> <author>: <subject>, 1 of 200". Alt+3: "Branches, N list, <branch>, current, …". Alt+1: back to Changes on the item you had. No menu opens and Windows makes no sound for Alt and the number; the menu bar stays closed when Alt is let go.
@@ -100,7 +100,16 @@ The runner's scripts are `tests/scripts/axGIT/07-own-programs.txt` (1 to 3) and 
 The runner's script is `tests/scripts/axGIT/09-what-was-seen.txt` (1 to 4).
 
 1. A folder inside a repository whose `.git` folder has a HEAD that is no reference (`garbage`): Ctrl+O on it says "Not a git repository", naming the folder; the repository above is not opened and nothing runs in it.
-2. A repository with a hook and a program setting (`core.sshCommand` set to a command line): the notice writes out "The programs as its settings write them: core.sshcommand: …" with the whole value, and says "Trust lets the programs these settings name run, and whatever they run in turn, files of the work tree included; axGIT sets aside a hook or program only where its path is in the work tree."
+2. A repository with a hook and a program setting (`core.sshCommand` set to a command line): the notice writes out "The programs as its settings write them: core.sshcommand: …" with the whole value, and says what trust means (since the sixth pass), "Until you trust a repository, axGIT runs no git in it and reaches nothing. Once you trust it, git works in it as git does: …"
 3. The same repository, notice open; in a console add a setting (`git config filter.x.clean cat`), then Trust this repository: the notice comes again, starting "What axGIT finds in this repository changed while you were asked", naming filter.x.clean; no list comes.
 4. In a trusted repository, add a filter in a console, then Ctrl+Shift+S on a changed file: the notice comes, without "Stage failed", and the file is not staged.
 5. By ear: an untracked repository in the work tree (a folder with `git init` in it) is not asked about at the opening; after Stage all the notice comes naming "submodule <folder>: …" for what it holds.
+
+## 11. The review's sixth pass of 2026-11-28 (AG-1.6, AG-1.6a)
+
+The runner's scripts are `tests/scripts/axGIT/01-start.txt` (1, 2) and `08-settings-and-servers.txt` (3); the repositories of the review are the unit tests' (`GitAskedOnceTests`).
+
+1. A repository with nothing in it but files and commits, opened for the first time: the notice "This repository is not trusted yet", with "axGIT found nothing of concern in it. It reads the repository's files itself and cannot promise that it found everything." and what trust means; Enter (Keep it off) says "Not opened", and no list comes.
+2. The same, Alt+T: "Trusted", and the Changes list comes; closed and opened again: no notice.
+3. A fresh clone: the same notice, naming no setting; trusted once, it opens without the notice.
+4. By ear: a submodule whose `core.worktree` was set in a console to another folder: the notice names "submodule <path>: core.worktree".
