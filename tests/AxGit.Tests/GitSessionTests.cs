@@ -183,7 +183,10 @@ public sealed class GitSessionTests : IDisposable
                 // "remote-", which git does not find, so that remote is reached by nothing.
                 var signing = Companions(name).Any(companion => companion.Name == "commit.gpgSign");
                 var helper = name.EndsWith(".vcs", StringComparison.OrdinalIgnoreCase);
-                foreach (var (arguments, result) in results.Where(one => !one.Result.Ok && !(signing && one.Arguments[0] == "commit") && !(helper && one.Arguments[0] is "fetch" or "pull" or "push")))
+                // A hook of the settings (hook.<name>.command, git 2.54 and later) set to nothing is a hook git cannot
+                // start: the command stops with "cannot spawn" and nothing runs. Older git does not know the setting.
+                var settingsHook = name.StartsWith("hook.", StringComparison.OrdinalIgnoreCase) && name.EndsWith(".command", StringComparison.OrdinalIgnoreCase);
+                foreach (var (arguments, result) in results.Where(one => !one.Result.Ok && !(signing && one.Arguments[0] == "commit") && !(helper && one.Arguments[0] is "fetch" or "pull" or "push") && !(settingsHook && one.Result.AllText.Contains("cannot spawn", StringComparison.Ordinal))))
                 {
                     failed.Add($"{name}: git {string.Join(' ', arguments)}: {result.FirstLine}");
                 }
